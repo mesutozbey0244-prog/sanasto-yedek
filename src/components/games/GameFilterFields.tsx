@@ -1,7 +1,4 @@
-import Chip from '@/components/Chip';
-import CategoryFilterField from '@/components/CategoryFilterField';
-import LearningStatusField from '@/components/LearningStatusField';
-import LevelSelector from '@/components/LevelSelector';
+import SelectionFilterFields from '@/components/SelectionFilterFields';
 import SortSegmentedControl from '@/components/SortSegmentedControl';
 import { type GameSetupConfig, type WordCount } from '@/lib/games/gameConfig';
 import type { Category, Word } from '@/lib/vocabulary';
@@ -37,32 +34,25 @@ export default function GameFilterFields({ config, onChange, categories, words }
 
   return (
     <div className="space-y-6">
-      <CategoryFilterField
-        label="Ana kategoriler"
+      <SelectionFilterFields
+        categoryLabel="Ana kategoriler"
         categories={categories}
         words={words}
-        selected={config.categoryIds}
-        onChange={(categoryIds) => update({ categoryIds })}
+        filters={config}
+        onChange={update}
+        toggles={[
+          {
+            label: 'Sadece favoriler',
+            checked: config.favoritesOnly,
+            onChange: (favoritesOnly) => update({ favoritesOnly }),
+          },
+          {
+            label: 'Daha önce yanlışlar',
+            checked: config.wrongOnly,
+            onChange: (wrongOnly) => update({ wrongOnly }),
+          },
+        ]}
       />
-
-      <LevelSelector value={config.levels} onChange={(levels) => update({ levels })} />
-
-      <LearningStatusField
-        statuses={config.learningStatuses}
-        onChange={(learningStatuses) => update({ learningStatuses })}
-      />
-
-      <fieldset className="space-y-2">
-        <legend className="text-sm font-semibold text-slate-700">Kelime seçimi</legend>
-        <div className="flex flex-wrap gap-2">
-          <Chip active={config.favoritesOnly} onClick={() => update({ favoritesOnly: !config.favoritesOnly })}>
-            Sadece favoriler
-          </Chip>
-          <Chip active={config.wrongOnly} onClick={() => update({ wrongOnly: !config.wrongOnly })}>
-            Daha önce yanlışlar
-          </Chip>
-        </div>
-      </fieldset>
 
       <fieldset className="space-y-2">
         <legend className="text-sm font-semibold text-slate-700">Kelime sıralaması</legend>

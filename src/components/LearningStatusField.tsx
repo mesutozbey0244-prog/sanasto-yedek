@@ -1,4 +1,4 @@
-import Chip from '@/components/Chip';
+import MultiSelectField from '@/components/MultiSelectField';
 import { LEARNING_STATUS_OPTIONS, type LearningStatus } from '@/lib/vocabulary';
 
 interface LearningStatusFieldProps {
@@ -7,20 +7,15 @@ interface LearningStatusFieldProps {
 }
 
 export default function LearningStatusField({ statuses, onChange }: LearningStatusFieldProps) {
-  const toggle = (status: LearningStatus) => {
-    onChange(statuses.includes(status) ? statuses.filter((item) => item !== status) : [...statuses, status]);
-  };
-
   return (
-    <fieldset className="space-y-2">
-      <legend className="text-sm font-semibold text-slate-700">Öğrenme durumu</legend>
-      <div className="flex flex-wrap gap-2">
-        {LEARNING_STATUS_OPTIONS.map((option) => (
-          <Chip key={option.value} active={statuses.includes(option.value)} onClick={() => toggle(option.value)}>
-            {option.label}
-          </Chip>
-        ))}
-      </div>
-    </fieldset>
+    <MultiSelectField
+      label="Öğrenme durumu"
+      options={LEARNING_STATUS_OPTIONS}
+      selected={statuses}
+      allLabel="Durum seçin"
+      onChange={(selected) =>
+        onChange(LEARNING_STATUS_OPTIONS.map((option) => option.value).filter((value) => selected.includes(value)))
+      }
+    />
   );
 }

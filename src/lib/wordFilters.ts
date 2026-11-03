@@ -20,10 +20,6 @@ export const EMPTY_WORD_FILTERS: WordFilters = {
   favoritesOnly: false,
 };
 
-export function toggleLevelSelection(current: LevelSelection, level: Level): LevelSelection {
-  if (current === 'all') return [level];
-  return current.includes(level) ? current.filter((item) => item !== level) : [...current, level];
-}
 
 export function matchesLevels(word: Pick<Word, 'level'>, levels: LevelSelection): boolean {
   return levels === 'all' || levels.includes(word.level);

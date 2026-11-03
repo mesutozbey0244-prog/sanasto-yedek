@@ -1,9 +1,6 @@
-import { useLibrary } from '@/contexts/LibraryContext';
-import Chip from '@/components/Chip';
-import CategoryFilterField from '@/components/CategoryFilterField';
-import LearningStatusField from '@/components/LearningStatusField';
-import LevelSelector from '@/components/LevelSelector';
+import SelectionFilterFields from '@/components/SelectionFilterFields';
 import SortSegmentedControl from '@/components/SortSegmentedControl';
+import { useLibrary } from '@/contexts/LibraryContext';
 import { selectListeningWords, type ListeningSource } from '@/lib/listening';
 import { WORD_LIST_SORT_OPTIONS } from '@/lib/wordSort';
 
@@ -22,29 +19,20 @@ export default function ListeningSourcePicker({ source, onChange }: ListeningSou
     <section className="space-y-5 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
       <p className="text-sm font-semibold text-slate-700">Hangi kelimeleri dinlemek istersiniz?</p>
 
-      <CategoryFilterField
-        label="Ana kategoriler"
+      <SelectionFilterFields
+        categoryLabel="Ana kategoriler"
         categories={categories}
         words={words}
-        selected={source.categoryIds}
-        onChange={(categoryIds) => update({ categoryIds })}
+        filters={source}
+        onChange={update}
+        toggles={[
+          {
+            label: 'Sadece favoriler',
+            checked: source.favoritesOnly,
+            onChange: (favoritesOnly) => update({ favoritesOnly }),
+          },
+        ]}
       />
-
-      <LevelSelector value={source.levels} onChange={(levels) => update({ levels })} />
-
-      <LearningStatusField
-        statuses={source.learningStatuses}
-        onChange={(learningStatuses) => update({ learningStatuses })}
-      />
-
-      <fieldset className="space-y-2">
-        <legend className="text-sm font-semibold text-slate-700">Kelime seçimi</legend>
-        <div className="flex flex-wrap gap-2">
-          <Chip active={source.favoritesOnly} onClick={() => update({ favoritesOnly: !source.favoritesOnly })}>
-            Sadece favoriler
-          </Chip>
-        </div>
-      </fieldset>
 
       <fieldset className="space-y-2">
         <legend className="text-sm font-semibold text-slate-700">Kelime sıralaması</legend>
