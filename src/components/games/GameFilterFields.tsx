@@ -3,22 +3,22 @@ import LearningStatusField from '@/components/LearningStatusField';
 import LevelSelector from '@/components/LevelSelector';
 import MultiSelectField from '@/components/MultiSelectField';
 import { type GameSetupConfig, type WordCount } from '@/lib/games/gameConfig';
-import type { Category } from '@/lib/vocabulary';
+import type { CategoryOption } from '@/lib/learningProgress';
 
 interface GameFilterFieldsProps {
   config: GameSetupConfig;
   onChange: (config: GameSetupConfig) => void;
-  categories: Category[];
+  categoryOptions: CategoryOption[];
 }
 
-export default function GameFilterFields({ config, onChange, categories }: GameFilterFieldsProps) {
+export default function GameFilterFields({ config, onChange, categoryOptions }: GameFilterFieldsProps) {
   const update = (patch: Partial<GameSetupConfig>) => onChange({ ...config, ...patch });
 
   return (
     <div className="space-y-6">
       <MultiSelectField
         label="Ana kategoriler"
-        options={categories.map((category) => ({ value: category.id, label: category.name }))}
+        options={categoryOptions}
         selected={config.categoryIds}
         allLabel="Tüm kategoriler"
         onChange={(categoryIds) => update({ categoryIds })}

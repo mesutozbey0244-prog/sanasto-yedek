@@ -1,11 +1,11 @@
 import { useState, type ReactNode } from 'react';
-import { BookOpen, Gamepad2, Headphones, Heart, LibraryBig, LogOut, Tags, TriangleAlert, type LucideIcon } from 'lucide-react';
+import { BookOpen, Gamepad2, Headphones, LibraryBig, LogOut, TriangleAlert, type LucideIcon } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { isSpeechSupported } from '@/lib/speech';
 import { useVoices } from '@/hooks/useSpeechSettings';
 import { describeError } from '@/lib/errors';
 
-export type TabId = 'games' | 'listening' | 'favorites' | 'words' | 'categories';
+export type TabId = 'games' | 'listening' | 'words';
 
 interface Tab {
   id: TabId;
@@ -16,9 +16,7 @@ interface Tab {
 export const TABS: Tab[] = [
   { id: 'games', label: 'Oyunlar', icon: Gamepad2 },
   { id: 'listening', label: 'Dinleme', icon: Headphones },
-  { id: 'favorites', label: 'Favoriler', icon: Heart },
   { id: 'words', label: 'Kelimeler', icon: LibraryBig },
-  { id: 'categories', label: 'Kategoriler', icon: Tags },
 ];
 
 interface AppShellProps {
@@ -104,7 +102,7 @@ export default function AppShell({ activeTab, onTabChange, children }: AppShellP
         className="fixed inset-x-0 bottom-0 z-30 border-t border-slate-200 bg-white/95 backdrop-blur md:hidden"
         aria-label="Ana menü"
       >
-        <div className="mx-auto grid max-w-md grid-cols-5 px-2 pb-[env(safe-area-inset-bottom)] pt-2">
+        <div className="mx-auto grid max-w-md grid-cols-3 px-2 pb-[env(safe-area-inset-bottom)] pt-2">
           {TABS.map((tab) => {
             const isActive = activeTab === tab.id;
             return (

@@ -7,7 +7,6 @@ import {
   DEFAULT_CATEGORY_NAMES,
   normalizeFinnish,
   type Category,
-  type Subcategory,
   type Word,
   type WordFormValues,
   type LearningStatus,
@@ -33,7 +32,6 @@ async function fetchAll<T>(table: string): Promise<T[]> {
 
 interface LibraryContextValue {
   categories: Category[];
-  subcategories: Subcategory[];
   words: Word[];
   isLoading: boolean;
   loadError: string | null;
@@ -41,9 +39,6 @@ interface LibraryContextValue {
   addCategory: (name: string) => Promise<void>;
   renameCategory: (id: string, name: string) => Promise<void>;
   deleteCategory: (id: string) => Promise<void>;
-  addSubcategory: (categoryId: string, name: string) => Promise<void>;
-  renameSubcategory: (id: string, name: string) => Promise<void>;
-  deleteSubcategory: (id: string) => Promise<void>;
   seedDefaultCategories: () => Promise<number>;
   reorderCategories: (orderedIds: string[]) => Promise<void>;
   saveWord: (values: WordFormValues, wordId: string | null) => Promise<void>;
@@ -61,7 +56,6 @@ const LibraryContext = createContext<LibraryContextValue | undefined>(undefined)
 
 export function LibraryProvider({ children }: { children: ReactNode }) {
   const [categories, setCategories] = useState<Category[]>([]);
-  const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
   const [words, setWords] = useState<Word[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -74,13 +68,11 @@ export function LibraryProvider({ children }: { children: ReactNode }) {
   const reload = useCallback(async () => {
     setLoadError(null);
     try {
-      const [loadedCategories, loadedSubcategories, loadedWords] = await Promise.all([
+      const [loadedCategories, loadedWords] = await Promise.all([
         fetchAll<Category>('categories'),
-        fetchAll<Subcategory>('subcategories'),
         fetchAll<Word>('words'),
       ]);
       setCategories(loadedCategories);
-      setSubcategories(loadedSubcategories);
       setWords(loadedWords);
     } catch (error) {
       setLoadError(describeError(error));
@@ -131,25 +123,6 @@ export function LibraryProvider({ children }: { children: ReactNode }) {
       if (failed?.error) throw failed.error;
     },
     [reload],
-  );
-
-  const addSubcategory = useCallback(
-    (categoryId: string, name: string) =>
-      runAndReload(() =>
-        supabase.from('subcategories').insert({ category_id: categoryId, name: name.trim() }),
-      ),
-    [runAndReload],
-  );
-
-  const renameSubcategory = useCallback(
-    (id: string, name: string) =>
-      runAndReload(() => supabase.from('subcategories').update({ name: name.trim() }).eq('id', id)),
-    [runAndReload],
-  );
-
-  const deleteSubcategory = useCallback(
-    (id: string) => runAndReload(() => supabase.from('subcategories').delete().eq('id', id)),
-    [runAndReload],
   );
 
   const seedDefaultCategories = useCallback(async () => {
@@ -268,7 +241,6 @@ export function LibraryProvider({ children }: { children: ReactNode }) {
   const value = useMemo<LibraryContextValue>(
     () => ({
       categories,
-      subcategories,
       words,
       isLoading,
       loadError,
@@ -276,9 +248,6 @@ export function LibraryProvider({ children }: { children: ReactNode }) {
       addCategory,
       renameCategory,
       deleteCategory,
-      addSubcategory,
-      renameSubcategory,
-      deleteSubcategory,
       seedDefaultCategories,
       reorderCategories,
       saveWord,
@@ -289,7 +258,6 @@ export function LibraryProvider({ children }: { children: ReactNode }) {
     }),
     [
       categories,
-      subcategories,
       words,
       isLoading,
       loadError,
@@ -297,9 +265,6 @@ export function LibraryProvider({ children }: { children: ReactNode }) {
       addCategory,
       renameCategory,
       deleteCategory,
-      addSubcategory,
-      renameSubcategory,
-      deleteSubcategory,
       seedDefaultCategories,
       reorderCategories,
       saveWord,

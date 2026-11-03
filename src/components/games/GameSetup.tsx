@@ -1,6 +1,7 @@
 import { ArrowLeft, AlertTriangle, Info, Play } from 'lucide-react';
 import GameFilterFields from '@/components/games/GameFilterFields';
 import { useLibrary } from '@/contexts/LibraryContext';
+import { getCategoryOptions } from '@/lib/learningProgress';
 import {
   countWordsWithoutImage,
   getCandidateWords,
@@ -57,7 +58,7 @@ export default function GameSetup({ gameId, config, onConfigChange, settingsErro
       </div>
 
       <div className="space-y-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-        <GameFilterFields config={config} onChange={onConfigChange} categories={categories} />
+        <GameFilterFields config={config} onChange={onConfigChange} categoryOptions={getCategoryOptions(categories, words)} />
 
         <div className="space-y-3">
           <p className="text-sm text-slate-700">

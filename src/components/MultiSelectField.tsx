@@ -1,9 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { Check, ChevronDown } from 'lucide-react';
+import LearningBattery from '@/components/LearningBattery';
+import type { LearningProgress } from '@/lib/learningProgress';
 
 export interface MultiSelectOption {
   value: string;
   label: string;
+  progress?: LearningProgress;
 }
 
 interface MultiSelectFieldProps {
@@ -92,16 +95,19 @@ export default function MultiSelectField({
                     role="option"
                     aria-selected={checked}
                     onClick={() => toggle(option.value)}
-                    className="flex w-full items-center gap-3 px-3 py-2 text-left text-sm text-slate-800 transition hover:bg-slate-50"
+                    className="flex w-full items-start gap-3 px-3 py-2.5 text-left text-sm text-slate-800 transition hover:bg-slate-50"
                   >
                     <span
-                      className={`flex h-4 w-4 shrink-0 items-center justify-center rounded border ${
+                      className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded border ${
                         checked ? 'border-blue-700 bg-blue-700 text-white' : 'border-slate-300 bg-white'
                       }`}
                     >
                       {checked && <Check className="h-3 w-3" aria-hidden="true" />}
                     </span>
-                    <span className="truncate">{option.label}</span>
+                    <span className="min-w-0 flex-1 space-y-1.5">
+                      <span className="block truncate">{option.label}</span>
+                      {option.progress && <LearningBattery progress={option.progress} />}
+                    </span>
                   </button>
                 </li>
               );

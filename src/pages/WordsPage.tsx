@@ -1,5 +1,7 @@
 import { useMemo, useState } from 'react';
-import { Plus } from 'lucide-react';
+import { Plus, Tags } from 'lucide-react';
+import CategoryManager from '@/components/CategoryManager';
+import Modal from '@/components/Modal';
 import PageHeader from '@/components/PageHeader';
 import WordFilterBar from '@/components/WordFilterBar';
 import WordFormModal from '@/components/WordFormModal';
@@ -23,6 +25,7 @@ export default function WordsPage() {
   const { words } = useLibrary();
   const [filters, setFilters] = useState<WordFilters>(EMPTY_WORD_FILTERS);
   const [isCreating, setIsCreating] = useState(false);
+  const [isManagingCategories, setIsManagingCategories] = useState(false);
   const [sortSettings, setSortSettings] = useStoredState<{ mode: WordListSort }>(WORD_SORT_KEY, { mode: 'added' });
   const sortMode = sortSettings.mode;
 
@@ -39,13 +42,22 @@ export default function WordsPage() {
         title="Kelimelerim"
         description={`${words.length} kelime kayıtlı.`}
         action={
-          <button
-            type="button"
-            onClick={() => setIsCreating(true)}
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-700 px-5 py-3 font-semibold text-white shadow-md shadow-blue-200 transition hover:bg-blue-800"
-          >
-            <Plus className="h-5 w-5" /> Yeni kelime
-          </button>
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <button
+              type="button"
+              onClick={() => setIsManagingCategories(true)}
+              className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-5 py-3 font-semibold text-slate-700 transition hover:bg-slate-50"
+            >
+              <Tags className="h-5 w-5" /> Kategorileri yönet
+            </button>
+            <button
+              type="button"
+              onClick={() => setIsCreating(true)}
+              className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-700 px-5 py-3 font-semibold text-white shadow-md shadow-blue-200 transition hover:bg-blue-800"
+            >
+              <Plus className="h-5 w-5" /> Yeni kelime
+            </button>
+          </div>
         }
       />
 
@@ -84,6 +96,11 @@ export default function WordsPage() {
       />
 
       {isCreating && <WordFormModal word={null} onClose={() => setIsCreating(false)} />}
+      {isManagingCategories && (
+        <Modal title="Kategorileri yönet" onClose={() => setIsManagingCategories(false)} maxWidthClass="max-w-3xl">
+          <CategoryManager />
+        </Modal>
+      )}
     </div>
   );
 }

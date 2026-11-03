@@ -2,10 +2,8 @@ import { useState, type ReactNode } from 'react';
 import { Loader2, RefreshCw } from 'lucide-react';
 import AppShell, { type TabId } from '@/components/AppShell';
 import { LibraryProvider, useLibrary } from '@/contexts/LibraryContext';
-import FavoritesPage from '@/pages/FavoritesPage';
 import GamesPage from '@/pages/GamesPage';
 import ListeningPage from '@/pages/ListeningPage';
-import CategoriesPage from '@/pages/CategoriesPage';
 import WordsPage from '@/pages/WordsPage';
 
 function SignedInContent() {
@@ -40,9 +38,7 @@ function SignedInContent() {
     <AppShell activeTab={activeTab} onTabChange={setActiveTab}>
       {activeTab === 'games' && <GamesPage />}
       {activeTab === 'listening' && <ListeningPage />}
-      {activeTab === 'favorites' && <FavoritesPage />}
       {activeTab === 'words' && <WordsPage />}
-      {activeTab === 'categories' && <CategoriesPage />}
     </AppShell>
   );
 }

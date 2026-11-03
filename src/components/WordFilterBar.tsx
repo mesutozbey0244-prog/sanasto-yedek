@@ -2,6 +2,7 @@ import { Search, SlidersHorizontal, X } from 'lucide-react';
 import LevelSelector from '@/components/LevelSelector';
 import MultiSelectField from '@/components/MultiSelectField';
 import { useLibrary } from '@/contexts/LibraryContext';
+import { getCategoryOptions } from '@/lib/learningProgress';
 import { EMPTY_WORD_FILTERS, type WordFilters } from '@/lib/wordFilters';
 import { LEARNING_STATUS_OPTIONS, WORD_TYPE_OPTIONS, type LearningStatus, type WordType } from '@/lib/vocabulary';
 
@@ -15,7 +16,7 @@ const selectClass =
   'w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100';
 
 export default function WordFilterBar({ filters, onChange, showFavoritesToggle = true }: WordFilterBarProps) {
-  const { categories } = useLibrary();
+  const { categories, words } = useLibrary();
   const hasActiveFilters = JSON.stringify(filters) !== JSON.stringify(EMPTY_WORD_FILTERS);
 
   const update = (patch: Partial<WordFilters>) => onChange({ ...filters, ...patch });
@@ -36,7 +37,7 @@ export default function WordFilterBar({ filters, onChange, showFavoritesToggle =
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         <MultiSelectField
           label="Ana kategori"
-          options={categories.map((category) => ({ value: category.id, label: category.name }))}
+          options={getCategoryOptions(categories, words)}
           selected={filters.categoryIds}
           allLabel="Tüm kategoriler"
           onChange={(categoryIds) => update({ categoryIds })}

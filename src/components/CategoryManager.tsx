@@ -1,6 +1,5 @@
 import { useMemo, useState, type FormEvent } from 'react';
 import { Plus, Sparkles } from 'lucide-react';
-import PageHeader from '@/components/PageHeader';
 import CategoryPanel from '@/components/CategoryPanel';
 import ConfirmModal from '@/components/ConfirmModal';
 import EmptyState from '@/components/EmptyState';
@@ -19,7 +18,7 @@ const SORT_OPTIONS: { value: CategorySortMode; label: string }[] = [
   { value: 'alphabetical', label: 'Alfabetik (A-Z)' },
 ];
 
-export default function CategoriesPage() {
+export default function CategoryManager() {
   const {
     categories,
     words,
@@ -111,12 +110,7 @@ export default function CategoriesPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title="Kategoriler"
-        description="Ana kategorilerinizi kendinize göre düzenleyin. Kategoriler kelime olmadan da oluşturulabilir."
-      />
-
-      <section className="space-y-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <section className="space-y-4 rounded-2xl border border-slate-200 bg-slate-50 p-4 sm:p-5">
         <form onSubmit={handleAddCategory} className="flex flex-col gap-3 sm:flex-row">
           <input
             value={newCategory}
@@ -124,7 +118,7 @@ export default function CategoriesPage() {
             maxLength={80}
             placeholder="Yeni ana kategori adı"
             aria-label="Yeni ana kategori adı"
-            className="min-w-0 flex-1 rounded-xl border border-slate-300 px-4 py-3 text-slate-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+            className="min-w-0 flex-1 rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
           />
           <button
             type="submit"
@@ -184,7 +178,7 @@ export default function CategoriesPage() {
             </div>
           </div>
 
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid gap-3">
             {orderedCategories.map((category, index) => (
               <CategoryPanel
                 key={category.id}

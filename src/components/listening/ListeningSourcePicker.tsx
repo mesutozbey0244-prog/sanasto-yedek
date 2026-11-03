@@ -4,6 +4,7 @@ import LearningStatusField from '@/components/LearningStatusField';
 import LevelSelector from '@/components/LevelSelector';
 import MultiSelectField from '@/components/MultiSelectField';
 import { selectListeningWords, type ListeningSource } from '@/lib/listening';
+import { getCategoryOptions } from '@/lib/learningProgress';
 
 interface ListeningSourcePickerProps {
   source: ListeningSource;
@@ -14,7 +15,6 @@ export default function ListeningSourcePicker({ source, onChange }: ListeningSou
   const { words, categories } = useLibrary();
   const update = (patch: Partial<ListeningSource>) => onChange({ ...source, ...patch });
 
-  const categoryOptions = categories.map((category) => ({ value: category.id, label: category.name }));
   const selectedCount = selectListeningWords(words, source).length;
 
   return (
@@ -23,7 +23,7 @@ export default function ListeningSourcePicker({ source, onChange }: ListeningSou
 
       <MultiSelectField
         label="Ana kategoriler"
-        options={categoryOptions}
+        options={getCategoryOptions(categories, words)}
         selected={source.categoryIds}
         allLabel="Tüm kategoriler"
         onChange={(categoryIds) => update({ categoryIds })}
