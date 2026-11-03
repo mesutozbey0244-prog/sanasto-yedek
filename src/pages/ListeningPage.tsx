@@ -45,7 +45,7 @@ export default function ListeningPage() {
 
       <button
         type="button"
-        onClick={() => setQueue(selectedWords)}
+        onClick={() => setQueue(selectListeningWords(words, source))}
         disabled={selectedWords.length === 0}
         className="flex w-full items-center justify-center gap-3 rounded-2xl bg-blue-700 px-6 py-4 text-lg font-bold text-white shadow-lg shadow-blue-200 transition hover:bg-blue-800 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:shadow-none"
       >

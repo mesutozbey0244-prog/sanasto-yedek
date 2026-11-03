@@ -10,7 +10,16 @@ export function useListeningPlayer(queue: Word[], settings: ListeningSettings) {
   const { settings: speech } = useSpeechSettings();
   const [index, setIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [resumeKey, setResumeKey] = useState(0);
   const lastIndex = queue.length - 1;
+
+  useEffect(() => {
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') setResumeKey((key) => key + 1);
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+    return () => document.removeEventListener('visibilitychange', handleVisibility);
+  }, []);
 
   useEffect(() => {
     const word = queue[index];
@@ -47,14 +56,16 @@ export function useListeningPlayer(queue: Word[], settings: ListeningSettings) {
       cancelled = true;
       stopSpeech();
     };
-  }, [isPlaying, index, queue, lastIndex, settings, speech]);
+  }, [isPlaying, index, queue, lastIndex, settings, speech, resumeKey]);
 
   const goTo = useCallback(
     (target: number) => setIndex(Math.min(Math.max(target, 0), lastIndex)),
     [lastIndex],
   );
 
+  const play = useCallback(() => setIsPlaying(true), []);
+  const pause = useCallback(() => setIsPlaying(false), []);
   const togglePlaying = useCallback(() => setIsPlaying((playing) => !playing), []);
 
-  return { index, isPlaying, togglePlaying, goTo, lastIndex };
+  return { index, isPlaying, play, pause, togglePlaying, goTo, lastIndex };
 }

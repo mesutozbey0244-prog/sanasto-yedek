@@ -1,7 +1,9 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Play, Pause, RotateCcw, SkipBack, SkipForward, ArrowLeft, Eye, EyeOff } from 'lucide-react';
 import WordImage from '@/components/WordImage';
 import { useListeningPlayer } from '@/hooks/useListeningPlayer';
+import { useKeepAliveAudio } from '@/hooks/useKeepAliveAudio';
+import { useMediaSession } from '@/hooks/useMediaSession';
 import type { ListeningSettings } from '@/lib/listening';
 import type { Word } from '@/lib/vocabulary';
 
@@ -12,10 +14,24 @@ interface ListeningPlayerProps {
 }
 
 export default function ListeningPlayer({ queue, settings, onBack }: ListeningPlayerProps) {
-  const { index, isPlaying, togglePlaying, goTo, lastIndex } = useListeningPlayer(queue, settings);
+  const { index, isPlaying, play, pause, togglePlaying, goTo, lastIndex } = useListeningPlayer(queue, settings);
   const [showMeaning, setShowMeaning] = useState(true);
   const word = queue[index];
   const progress = ((index + 1) / queue.length) * 100;
+  const goPrevious = useCallback(() => goTo(index - 1), [goTo, index]);
+  const goNext = useCallback(() => goTo(index + 1), [goTo, index]);
+
+  useKeepAliveAudio(isPlaying);
+  useMediaSession({
+    title: word.finnish,
+    artist: word.turkish,
+    artworkUrl: word.image_url,
+    isPlaying,
+    onPlay: play,
+    onPause: pause,
+    onNext: goNext,
+    onPrevious: goPrevious,
+  });
 
   return (
     <div className="mx-auto max-w-2xl space-y-6">

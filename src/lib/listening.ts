@@ -1,11 +1,19 @@
 import type { Word } from '@/lib/vocabulary';
 import type { SpeechLanguage } from '@/lib/speech';
 import { ALL_LEARNING_STATUSES, matchesSelectionFilters, type WordSelectionFilters } from '@/lib/wordFilters';
-import { sortWordsByListMode, type WordListSort } from '@/lib/wordSort';
+import { sortWordsByListMode, WORD_LIST_SORT_OPTIONS, type WordListSort } from '@/lib/wordSort';
+import { shuffle } from '@/lib/random';
+
+export type ListeningSort = WordListSort | 'random';
 
 export interface ListeningSource extends WordSelectionFilters {
-  sort: WordListSort;
+  sort: ListeningSort;
 }
+
+export const LISTENING_SORT_OPTIONS: { value: ListeningSort; label: string }[] = [
+  ...WORD_LIST_SORT_OPTIONS,
+  { value: 'random', label: 'Karışık' },
+];
 
 export const DEFAULT_LISTENING_SOURCE: ListeningSource = {
   categoryIds: [],
@@ -16,10 +24,8 @@ export const DEFAULT_LISTENING_SOURCE: ListeningSource = {
 };
 
 export function selectListeningWords(words: Word[], source: ListeningSource): Word[] {
-  return sortWordsByListMode(
-    words.filter((word) => matchesSelectionFilters(word, source)),
-    source.sort,
-  );
+  const filtered = words.filter((word) => matchesSelectionFilters(word, source));
+  return source.sort === 'random' ? shuffle(filtered) : sortWordsByListMode(filtered, source.sort);
 }
 
 export type ListeningOrder = 'fi_tr' | 'tr_fi' | 'fi_only' | 'tr_only';

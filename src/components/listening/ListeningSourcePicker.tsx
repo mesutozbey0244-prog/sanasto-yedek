@@ -1,8 +1,7 @@
 import SelectionFilterFields from '@/components/SelectionFilterFields';
-import SortSegmentedControl from '@/components/SortSegmentedControl';
+import SortDropdown from '@/components/SortDropdown';
 import { useLibrary } from '@/contexts/LibraryContext';
-import { selectListeningWords, type ListeningSource } from '@/lib/listening';
-import { WORD_LIST_SORT_OPTIONS } from '@/lib/wordSort';
+import { LISTENING_SORT_OPTIONS, selectListeningWords, type ListeningSource } from '@/lib/listening';
 
 interface ListeningSourcePickerProps {
   source: ListeningSource;
@@ -36,9 +35,9 @@ export default function ListeningSourcePicker({ source, onChange }: ListeningSou
 
       <fieldset className="space-y-2">
         <legend className="text-sm font-semibold text-slate-700">Kelime sıralaması</legend>
-        <SortSegmentedControl
+        <SortDropdown
           label="Kelime sıralaması"
-          options={WORD_LIST_SORT_OPTIONS}
+          options={LISTENING_SORT_OPTIONS}
           value={source.sort}
           onChange={(sort) => update({ sort })}
         />

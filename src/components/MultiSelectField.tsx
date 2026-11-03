@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { Check, ChevronDown } from 'lucide-react';
 import LearningBattery from '@/components/LearningBattery';
+import { useDismissOnOutside } from '@/hooks/useDismissOnOutside';
 import type { LearningProgress } from '@/lib/learningProgress';
 
 export interface MultiSelectOption {
@@ -28,22 +29,7 @@ export default function MultiSelectField({
 }: MultiSelectFieldProps) {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!isOpen) return;
-    const handlePointerDown = (event: MouseEvent) => {
-      if (!containerRef.current?.contains(event.target as Node)) setIsOpen(false);
-    };
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setIsOpen(false);
-    };
-    document.addEventListener('mousedown', handlePointerDown);
-    document.addEventListener('keydown', handleKeyDown);
-    return () => {
-      document.removeEventListener('mousedown', handlePointerDown);
-      document.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [isOpen]);
+  useDismissOnOutside(containerRef, isOpen, () => setIsOpen(false));
 
   const selectedLabels = options.filter((option) => selected.includes(option.value)).map((option) => option.label);
   const summary =

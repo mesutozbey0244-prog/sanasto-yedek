@@ -4,23 +4,15 @@ import CategoryPanel from '@/components/CategoryPanel';
 import ConfirmModal from '@/components/ConfirmModal';
 import EmptyState from '@/components/EmptyState';
 import { useLibrary } from '@/contexts/LibraryContext';
-import { useStoredState } from '@/hooks/useStoredState';
 import { describeError } from '@/lib/errors';
+import { CATEGORY_SORT_OPTIONS } from '@/lib/categorySort';
 import { DEFAULT_CATEGORY_NAMES, type Category, type Word } from '@/lib/vocabulary';
-import { sortByAlphabet } from '@/lib/wordSort';
-
-type CategorySortMode = 'manual' | 'alphabetical';
-
-const CATEGORY_SORT_KEY = 'sanasto.categorySort';
-
-const SORT_OPTIONS: { value: CategorySortMode; label: string }[] = [
-  { value: 'manual', label: 'Manuel sıralama' },
-  { value: 'alphabetical', label: 'Alfabetik (A-Z)' },
-];
 
 export default function CategoryManager() {
   const {
     categories,
+    categorySortMode: sortMode,
+    setCategorySortMode,
     words,
     addCategory,
     renameCategory,
@@ -32,18 +24,6 @@ export default function CategoryManager() {
   const [error, setError] = useState<string | null>(null);
   const [isSeeding, setIsSeeding] = useState(false);
   const [pendingDelete, setPendingDelete] = useState<Category | null>(null);
-  const [sortSettings, setSortSettings] = useStoredState<{ mode: CategorySortMode }>(CATEGORY_SORT_KEY, {
-    mode: 'manual',
-  });
-  const sortMode = sortSettings.mode;
-
-  const orderedCategories = useMemo(
-    () =>
-      sortMode === 'alphabetical'
-        ? sortByAlphabet(categories, (category) => category.name, 'turkish')
-        : [...categories].sort((a, b) => a.position - b.position),
-    [categories, sortMode],
-  );
 
   const wordsByCategory = useMemo(() => {
     const grouped = new Map<string, Word[]>();
@@ -87,8 +67,8 @@ export default function CategoryManager() {
 
   const moveCategory = (index: number, direction: 'up' | 'down') => {
     const target = direction === 'up' ? index - 1 : index + 1;
-    if (target < 0 || target >= orderedCategories.length) return;
-    const ids = orderedCategories.map((category) => category.id);
+    if (target < 0 || target >= categories.length) return;
+    const ids = categories.map((category) => category.id);
     [ids[index], ids[target]] = [ids[target], ids[index]];
     void runAction(() => reorderCategories(ids));
   };
@@ -162,12 +142,12 @@ export default function CategoryManager() {
                 : 'Kategoriler alfabetik olarak listeleniyor.'}
             </p>
             <div role="group" aria-label="Kategori sıralaması" className="inline-flex shrink-0 gap-1 rounded-xl bg-slate-100 p-1">
-              {SORT_OPTIONS.map((option) => (
+              {CATEGORY_SORT_OPTIONS.map((option) => (
                 <button
                   key={option.value}
                   type="button"
                   aria-pressed={sortMode === option.value}
-                  onClick={() => setSortSettings({ mode: option.value })}
+                  onClick={() => setCategorySortMode(option.value)}
                   className={`rounded-lg px-3 py-1.5 text-sm font-semibold transition ${
                     sortMode === option.value ? 'bg-white text-blue-800 shadow-sm' : 'text-slate-600 hover:text-slate-900'
                   }`}
@@ -179,7 +159,7 @@ export default function CategoryManager() {
           </div>
 
           <div className="grid gap-3">
-            {orderedCategories.map((category, index) => (
+            {categories.map((category, index) => (
               <CategoryPanel
                 key={category.id}
                 category={category}
@@ -187,7 +167,7 @@ export default function CategoryManager() {
                 onRename={(name) => renameCategory(category.id, name)}
                 onRequestDelete={() => setPendingDelete(category)}
                 canMoveUp={index > 0}
-                canMoveDown={index < orderedCategories.length - 1}
+                canMoveDown={index < categories.length - 1}
                 onMove={sortMode === 'manual' ? (direction) => moveCategory(index, direction) : undefined}
               />
             ))}

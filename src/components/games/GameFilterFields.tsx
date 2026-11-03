@@ -1,5 +1,5 @@
 import SelectionFilterFields from '@/components/SelectionFilterFields';
-import SortSegmentedControl from '@/components/SortSegmentedControl';
+import SortDropdown from '@/components/SortDropdown';
 import { type GameSetupConfig, type WordCount } from '@/lib/games/gameConfig';
 import type { Category, Word } from '@/lib/vocabulary';
 import type { WordListSort } from '@/lib/wordSort';
@@ -56,7 +56,7 @@ export default function GameFilterFields({ config, onChange, categories, words }
 
       <fieldset className="space-y-2">
         <legend className="text-sm font-semibold text-slate-700">Kelime sıralaması</legend>
-        <SortSegmentedControl label="Kelime sıralaması" options={GAME_SORT_OPTIONS} value={sortValue} onChange={applySort} />
+        <SortDropdown label="Kelime sıralaması" options={GAME_SORT_OPTIONS} value={sortValue} onChange={applySort} />
       </fieldset>
 
       <fieldset className="space-y-3">

@@ -7,10 +7,10 @@ import WordFilterBar from '@/components/WordFilterBar';
 import WordFormModal from '@/components/WordFormModal';
 import WordList from '@/components/WordList';
 import { useLibrary } from '@/contexts/LibraryContext';
+import SortDropdown from '@/components/SortDropdown';
 import { useStoredState } from '@/hooks/useStoredState';
 import { EMPTY_WORD_FILTERS, filterWords, type WordFilters } from '@/lib/wordFilters';
 import { sortWordsByListMode, WORD_LIST_SORT_OPTIONS, type WordListSort } from '@/lib/wordSort';
-import SortSegmentedControl from '@/components/SortSegmentedControl';
 
 const WORD_SORT_KEY = 'sanasto.wordListSort';
 
@@ -59,12 +59,14 @@ export default function WordsPage() {
         <span>Toplam {words.length} kelime</span>
         <span>Seçili filtrelerde {visibleWords.length} kelime</span>
       </div>
-        <SortSegmentedControl
-          label="Kelime sıralaması"
-          options={WORD_LIST_SORT_OPTIONS}
-          value={sortMode}
-          onChange={(mode) => setSortSettings({ mode })}
-        />
+        <div className="w-full sm:w-64">
+          <SortDropdown
+            label="Kelime sıralaması"
+            options={WORD_LIST_SORT_OPTIONS}
+            value={sortMode}
+            onChange={(mode) => setSortSettings({ mode })}
+          />
+        </div>
       </div>
 
       <WordList

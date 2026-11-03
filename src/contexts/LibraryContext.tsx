@@ -2,6 +2,8 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 import { supabase } from '@/lib/supabase';
 import { describeError } from '@/lib/errors';
 import { getProgressPatch } from '@/lib/games/wordProgress';
+import { CATEGORY_SORT_KEY, orderCategories, type CategorySortMode } from '@/lib/categorySort';
+import { useStoredState } from '@/hooks/useStoredState';
 import type { QuizGameId } from '@/lib/games/types';
 import {
   DEFAULT_CATEGORY_NAMES,
@@ -32,6 +34,8 @@ async function fetchAll<T>(table: string): Promise<T[]> {
 
 interface LibraryContextValue {
   categories: Category[];
+  categorySortMode: CategorySortMode;
+  setCategorySortMode: (mode: CategorySortMode) => void;
   words: Word[];
   isLoading: boolean;
   loadError: string | null;
@@ -57,6 +61,16 @@ const LibraryContext = createContext<LibraryContextValue | undefined>(undefined)
 export function LibraryProvider({ children }: { children: ReactNode }) {
   const [categories, setCategories] = useState<Category[]>([]);
   const [words, setWords] = useState<Word[]>([]);
+  const [categorySortSettings, setCategorySortSettings] = useStoredState<{ mode: CategorySortMode }>(
+    CATEGORY_SORT_KEY,
+    { mode: 'manual' },
+  );
+  const categorySortMode = categorySortSettings.mode;
+  const orderedCategories = useMemo(() => orderCategories(categories, categorySortMode), [categories, categorySortMode]);
+  const setCategorySortMode = useCallback(
+    (mode: CategorySortMode) => setCategorySortSettings({ mode }),
+    [setCategorySortSettings],
+  );
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
   const wordsRef = useRef<Word[]>([]);
@@ -240,7 +254,9 @@ export function LibraryProvider({ children }: { children: ReactNode }) {
 
   const value = useMemo<LibraryContextValue>(
     () => ({
-      categories,
+      categories: orderedCategories,
+      categorySortMode,
+      setCategorySortMode,
       words,
       isLoading,
       loadError,
@@ -257,7 +273,9 @@ export function LibraryProvider({ children }: { children: ReactNode }) {
       recordAnswers,
     }),
     [
-      categories,
+      orderedCategories,
+      categorySortMode,
+      setCategorySortMode,
       words,
       isLoading,
       loadError,
