@@ -18,6 +18,19 @@ export function sortWordsAlphabetically(words: Word[], language: AlphabetLanguag
   return sortByAlphabet(words, (word) => (language === 'finnish' ? word.finnish : word.turkish), language);
 }
 
+export type WordListSort = 'added' | 'finnish' | 'turkish';
+
+export const WORD_LIST_SORT_OPTIONS: { value: WordListSort; label: string }[] = [
+  { value: 'added', label: 'Eklenme sırası' },
+  { value: 'finnish', label: 'Fince A-Z' },
+  { value: 'turkish', label: 'Türkçe A-Z' },
+];
+
+export function sortWordsByListMode(words: Word[], mode: WordListSort): Word[] {
+  if (mode === 'added') return words;
+  return sortWordsAlphabetically(words, mode === 'finnish' ? 'finnish' : 'turkish');
+}
+
 export function orderWords(words: Word[], order: WordOrder, language: AlphabetLanguage): Word[] {
   if (order === 'random') return shuffle(words);
   if (order === 'alphabetical') return sortWordsAlphabetically(words, language);

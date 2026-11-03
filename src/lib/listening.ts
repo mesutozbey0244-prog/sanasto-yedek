@@ -1,18 +1,25 @@
 import type { Word } from '@/lib/vocabulary';
 import type { SpeechLanguage } from '@/lib/speech';
 import { ALL_LEARNING_STATUSES, matchesSelectionFilters, type WordSelectionFilters } from '@/lib/wordFilters';
+import { sortWordsByListMode, type WordListSort } from '@/lib/wordSort';
 
-export type ListeningSource = WordSelectionFilters;
+export interface ListeningSource extends WordSelectionFilters {
+  sort: WordListSort;
+}
 
 export const DEFAULT_LISTENING_SOURCE: ListeningSource = {
   categoryIds: [],
   levels: 'all',
   learningStatuses: ALL_LEARNING_STATUSES,
   favoritesOnly: false,
+  sort: 'added',
 };
 
 export function selectListeningWords(words: Word[], source: ListeningSource): Word[] {
-  return words.filter((word) => matchesSelectionFilters(word, source));
+  return sortWordsByListMode(
+    words.filter((word) => matchesSelectionFilters(word, source)),
+    source.sort,
+  );
 }
 
 export type ListeningOrder = 'fi_tr' | 'tr_fi' | 'fi_only' | 'tr_only';

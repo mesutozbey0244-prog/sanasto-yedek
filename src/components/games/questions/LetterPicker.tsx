@@ -25,6 +25,26 @@ export default function LetterPicker({ tiles, values, disabled, onPick, onBacksp
 
   return (
     <div className="space-y-3">
+      <div className="flex justify-center gap-2">
+        <button
+          type="button"
+          onClick={onBackspace}
+          disabled={disabled || !hasFilled}
+          className="inline-flex items-center gap-1.5 rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:opacity-40"
+        >
+          <Delete className="h-4 w-4" aria-hidden="true" />
+          Sil
+        </button>
+        <button
+          type="button"
+          onClick={onClear}
+          disabled={disabled || !hasFilled}
+          className="inline-flex items-center gap-1.5 rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:opacity-40"
+        >
+          <RotateCcw className="h-4 w-4" aria-hidden="true" />
+          Temizle
+        </button>
+      </div>
       <div className="flex flex-wrap justify-center gap-1.5 sm:gap-2">
         {tiles.map((letter, index) => {
           const isUsed = usedTiles[index];
@@ -45,26 +65,6 @@ export default function LetterPicker({ tiles, values, disabled, onPick, onBacksp
             </button>
           );
         })}
-      </div>
-      <div className="flex justify-center gap-2">
-        <button
-          type="button"
-          onClick={onBackspace}
-          disabled={disabled || !hasFilled}
-          className="inline-flex items-center gap-1.5 rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:opacity-40"
-        >
-          <Delete className="h-4 w-4" aria-hidden="true" />
-          Sil
-        </button>
-        <button
-          type="button"
-          onClick={onClear}
-          disabled={disabled || !hasFilled}
-          className="inline-flex items-center gap-1.5 rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:opacity-40"
-        >
-          <RotateCcw className="h-4 w-4" aria-hidden="true" />
-          Temizle
-        </button>
       </div>
     </div>
   );

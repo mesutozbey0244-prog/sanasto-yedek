@@ -18,6 +18,11 @@ export function getLearningProgress(words: Word[]): LearningProgress {
   };
 }
 
+export function getSelectionProgress(words: Word[], categoryIds: string[]): LearningProgress {
+  if (categoryIds.length === 0) return getLearningProgress(words);
+  return getLearningProgress(words.filter((word) => word.category_id !== null && categoryIds.includes(word.category_id)));
+}
+
 export function getCategoryOptions(categories: Category[], words: Word[]): CategoryOption[] {
   const wordsByCategory = new Map<string, Word[]>();
   for (const word of words) {

@@ -9,17 +9,10 @@ import WordList from '@/components/WordList';
 import { useLibrary } from '@/contexts/LibraryContext';
 import { useStoredState } from '@/hooks/useStoredState';
 import { EMPTY_WORD_FILTERS, filterWords, type WordFilters } from '@/lib/wordFilters';
-import { sortWordsAlphabetically } from '@/lib/wordSort';
-
-type WordListSort = 'added' | 'finnish' | 'turkish';
+import { sortWordsByListMode, WORD_LIST_SORT_OPTIONS, type WordListSort } from '@/lib/wordSort';
+import SortSegmentedControl from '@/components/SortSegmentedControl';
 
 const WORD_SORT_KEY = 'sanasto.wordListSort';
-
-const SORT_OPTIONS: { value: WordListSort; label: string }[] = [
-  { value: 'added', label: 'Eklenme sırası' },
-  { value: 'finnish', label: 'Fince A-Z' },
-  { value: 'turkish', label: 'Türkçe A-Z' },
-];
 
 export default function WordsPage() {
   const { words } = useLibrary();
@@ -30,9 +23,7 @@ export default function WordsPage() {
   const sortMode = sortSettings.mode;
 
   const visibleWords = useMemo(() => {
-    const filtered = filterWords(words, filters);
-    if (sortMode === 'added') return filtered;
-    return sortWordsAlphabetically(filtered, sortMode === 'finnish' ? 'finnish' : 'turkish');
+    return sortWordsByListMode(filterWords(words, filters), sortMode);
   }, [words, filters, sortMode]);
   const hasFilters = JSON.stringify(filters) !== JSON.stringify(EMPTY_WORD_FILTERS);
 
@@ -68,21 +59,12 @@ export default function WordsPage() {
         <span>Toplam {words.length} kelime</span>
         <span>Seçili filtrelerde {visibleWords.length} kelime</span>
       </div>
-        <div role="group" aria-label="Kelime sıralaması" className="inline-flex flex-wrap gap-1 rounded-xl bg-slate-100 p-1">
-          {SORT_OPTIONS.map((option) => (
-            <button
-              key={option.value}
-              type="button"
-              aria-pressed={sortMode === option.value}
-              onClick={() => setSortSettings({ mode: option.value })}
-              className={`rounded-lg px-3 py-1.5 text-sm font-semibold transition ${
-                sortMode === option.value ? 'bg-white text-blue-800 shadow-sm' : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              {option.label}
-            </button>
-          ))}
-        </div>
+        <SortSegmentedControl
+          label="Kelime sıralaması"
+          options={WORD_LIST_SORT_OPTIONS}
+          value={sortMode}
+          onChange={(mode) => setSortSettings({ mode })}
+        />
       </div>
 
       <WordList

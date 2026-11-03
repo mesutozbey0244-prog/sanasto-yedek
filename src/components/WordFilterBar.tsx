@@ -1,8 +1,7 @@
 import { Search, SlidersHorizontal, X } from 'lucide-react';
+import CategoryFilterField from '@/components/CategoryFilterField';
 import LevelSelector from '@/components/LevelSelector';
-import MultiSelectField from '@/components/MultiSelectField';
 import { useLibrary } from '@/contexts/LibraryContext';
-import { getCategoryOptions } from '@/lib/learningProgress';
 import { EMPTY_WORD_FILTERS, type WordFilters } from '@/lib/wordFilters';
 import { LEARNING_STATUS_OPTIONS, WORD_TYPE_OPTIONS, type LearningStatus, type WordType } from '@/lib/vocabulary';
 
@@ -35,11 +34,11 @@ export default function WordFilterBar({ filters, onChange, showFavoritesToggle =
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        <MultiSelectField
+        <CategoryFilterField
           label="Ana kategori"
-          options={getCategoryOptions(categories, words)}
+          categories={categories}
+          words={words}
           selected={filters.categoryIds}
-          allLabel="Tüm kategoriler"
           onChange={(categoryIds) => update({ categoryIds })}
         />
         <label className="space-y-1.5">

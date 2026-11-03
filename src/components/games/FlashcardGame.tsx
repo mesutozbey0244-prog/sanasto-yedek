@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 import { ArrowLeft, ArrowRight, Trophy } from 'lucide-react';
 import GameEndActions from '@/components/games/GameEndActions';
+import FlashcardStatusPicker from '@/components/games/FlashcardStatusPicker';
 import SpeakButton from '@/components/SpeakButton';
 import WordImage from '@/components/WordImage';
 import { useLibrary } from '@/contexts/LibraryContext';
 import { useSpeaker } from '@/hooks/useSpeaker';
 import { stopSpeech } from '@/lib/speech';
-import { getWordTypeLabel, LEARNING_STATUS_OPTIONS, type LearningStatus, type Word } from '@/lib/vocabulary';
+import { getWordTypeLabel, type LearningStatus, type Word } from '@/lib/vocabulary';
 
 interface FlashcardGameProps {
   title: string;
@@ -83,29 +84,8 @@ export default function FlashcardGame({ title, words, onExit, onRestart, onNext 
           </div>
           <p className="text-lg text-slate-600">{word.turkish}</p>
 
-          <div className="space-y-2 pt-2">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Öğrenme durumu</p>
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-4" role="group" aria-label="Öğrenme durumu">
-              {LEARNING_STATUS_OPTIONS.map((option) => {
-                const isActive = word.learning_status === option.value;
-                return (
-                  <button
-                    key={option.value}
-                    type="button"
-                    aria-pressed={isActive}
-                    disabled={isSavingStatus}
-                    onClick={() => handleStatusChange(option.value)}
-                    className={`rounded-xl px-2 py-2 text-xs font-semibold transition disabled:opacity-60 sm:text-sm ${
-                      isActive
-                        ? 'bg-blue-700 text-white shadow-sm'
-                        : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-                    }`}
-                  >
-                    {option.label}
-                  </button>
-                );
-              })}
-            </div>
+          <div className="space-y-3 pt-2">
+            <FlashcardStatusPicker status={word.learning_status} disabled={isSavingStatus} onSelect={handleStatusChange} />
             {statusError && (
               <p role="alert" className="text-sm font-medium text-red-700">
                 {statusError}

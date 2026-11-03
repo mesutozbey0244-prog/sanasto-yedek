@@ -1,30 +1,56 @@
 import Chip from '@/components/Chip';
+import CategoryFilterField from '@/components/CategoryFilterField';
 import LearningStatusField from '@/components/LearningStatusField';
 import LevelSelector from '@/components/LevelSelector';
-import MultiSelectField from '@/components/MultiSelectField';
+import SortSegmentedControl from '@/components/SortSegmentedControl';
 import { type GameSetupConfig, type WordCount } from '@/lib/games/gameConfig';
-import type { CategoryOption } from '@/lib/learningProgress';
+import type { Category, Word } from '@/lib/vocabulary';
+import type { WordListSort } from '@/lib/wordSort';
+
+type GameSort = WordListSort | 'random';
+
+const GAME_SORT_OPTIONS: { value: GameSort; label: string }[] = [
+  { value: 'added', label: 'Eklenme sırası' },
+  { value: 'finnish', label: 'Fince A-Z' },
+  { value: 'turkish', label: 'Türkçe A-Z' },
+  { value: 'random', label: 'Karışık' },
+];
 
 interface GameFilterFieldsProps {
   config: GameSetupConfig;
   onChange: (config: GameSetupConfig) => void;
-  categoryOptions: CategoryOption[];
+  categories: Category[];
+  words: Word[];
 }
 
-export default function GameFilterFields({ config, onChange, categoryOptions }: GameFilterFieldsProps) {
+export default function GameFilterFields({ config, onChange, categories, words }: GameFilterFieldsProps) {
   const update = (patch: Partial<GameSetupConfig>) => onChange({ ...config, ...patch });
+
+  const sortValue: GameSort = config.order === 'alphabetical' ? config.alphabetLanguage : config.order;
+  const applySort = (value: GameSort) => {
+    if (value === 'finnish' || value === 'turkish') {
+      update({ order: 'alphabetical', alphabetLanguage: value });
+      return;
+    }
+    update({ order: value });
+  };
 
   return (
     <div className="space-y-6">
-      <MultiSelectField
+      <CategoryFilterField
         label="Ana kategoriler"
-        options={categoryOptions}
+        categories={categories}
+        words={words}
         selected={config.categoryIds}
-        allLabel="Tüm kategoriler"
         onChange={(categoryIds) => update({ categoryIds })}
       />
 
       <LevelSelector value={config.levels} onChange={(levels) => update({ levels })} />
+
+      <LearningStatusField
+        statuses={config.learningStatuses}
+        onChange={(learningStatuses) => update({ learningStatuses })}
+      />
 
       <fieldset className="space-y-2">
         <legend className="text-sm font-semibold text-slate-700">Kelime seçimi</legend>
@@ -38,34 +64,9 @@ export default function GameFilterFields({ config, onChange, categoryOptions }: 
         </div>
       </fieldset>
 
-      <LearningStatusField
-        statuses={config.learningStatuses}
-        onChange={(learningStatuses) => update({ learningStatuses })}
-      />
-
       <fieldset className="space-y-2">
-        <legend className="text-sm font-semibold text-slate-700">Kelime sırası</legend>
-        <div className="flex flex-wrap gap-2">
-          <Chip active={config.order === 'added'} onClick={() => update({ order: 'added' })}>
-            Eklenme sırası
-          </Chip>
-          <Chip active={config.order === 'alphabetical'} onClick={() => update({ order: 'alphabetical' })}>
-            Alfabetik
-          </Chip>
-          <Chip active={config.order === 'random'} onClick={() => update({ order: 'random' })}>
-            Karışık
-          </Chip>
-        </div>
-        {config.order === 'alphabetical' && (
-          <div className="flex flex-wrap gap-2 pt-1">
-            <Chip active={config.alphabetLanguage === 'finnish'} onClick={() => update({ alphabetLanguage: 'finnish' })}>
-              Fince kelimeye göre
-            </Chip>
-            <Chip active={config.alphabetLanguage === 'turkish'} onClick={() => update({ alphabetLanguage: 'turkish' })}>
-              Türkçe anlama göre
-            </Chip>
-          </div>
-        )}
+        <legend className="text-sm font-semibold text-slate-700">Kelime sıralaması</legend>
+        <SortSegmentedControl label="Kelime sıralaması" options={GAME_SORT_OPTIONS} value={sortValue} onChange={applySort} />
       </fieldset>
 
       <fieldset className="space-y-3">
